@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useStore } from "@/lib/store";
 import ProductGrid from "@/components/ProductGrid";
+import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
-export default function ProductsPage() {
+function ProductsContent() {
   const { products } = useStore();
   const searchParams = useSearchParams();
   const categoryFromUrl = searchParams.get("category") || "All";
@@ -80,5 +81,13 @@ export default function ProductsPage() {
         <ProductGrid products={filtered} layout="grid" />
       </section>
     </main>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProductsContent />
+    </Suspense>
   );
 }
