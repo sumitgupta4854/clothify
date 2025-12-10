@@ -27,11 +27,13 @@ export default function AdminPage() {
     sizes: "S,M,L,XL",
     tag: "New",
     image: "",
+    quantity: 10,
   });
 
   const [imageFile, setImageFile] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const handleViewOrderDetails = (order) => {
     setSelectedOrder(order);
@@ -52,29 +54,14 @@ export default function AdminPage() {
       sizes: product.sizes.join(","),
       tag: product.tag,
       image: product.image,
+      quantity: product.quantity,
     });
+    setShowEditModal(true);
   };
 
-  const handleUpdateProduct = (e) => {
-    e.preventDefault();
-    if (!editingProduct) return;
-    const payload = {
-      name: newProd.name,
-      category: newProd.category,
-      price: Number(newProd.price),
-      mrp: Number(newProd.mrp),
-      rating: Number(newProd.rating),
-      sizes: newProd.sizes
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-      tag: newProd.tag || "New",
-      image: newProd.image || "",
-    };
-    // For simplicity, delete and add new (since no update function)
-    deleteProduct(editingProduct.id);
-    addProduct(payload);
+  const closeEditModal = () => {
     setEditingProduct(null);
+    setShowEditModal(false);
     setNewProd({
       name: "",
       category: "Men",
@@ -84,25 +71,11 @@ export default function AdminPage() {
       sizes: "S,M,L,XL",
       tag: "New",
       image: "",
+      quantity: 10,
     });
     setImageFile(null);
-    alert("Product updated");
   };
 
-  const cancelEdit = () => {
-    setEditingProduct(null);
-    setNewProd({
-      name: "",
-      category: "Men",
-      price: "",
-      mrp: "",
-      rating: 4.5,
-      sizes: "S,M,L,XL",
-      tag: "New",
-      image: "",
-    });
-    setImageFile(null);
-  };
 
   const handleProdChange = (e) => {
     const { name, value } = e.target;
@@ -121,9 +94,13 @@ export default function AdminPage() {
     }
   };
 
-  const handleAddProduct = (e) => {
+  const handleUpdateProduct = (e) => {
     e.preventDefault();
-    if (!newProd.name) return;
+    if (!editingProduct) return;
+    if (!newProd.name || !newProd.price || !newProd.mrp) {
+      alert("Please fill in all required fields (Name, Price, MRP)");
+      return;
+    }
     const payload = {
       name: newProd.name,
       category: newProd.category,
@@ -136,8 +113,13 @@ export default function AdminPage() {
         .filter(Boolean),
       tag: newProd.tag || "New",
       image: newProd.image || "",
+      quantity: Number(newProd.quantity) || 10,
     };
+    // For simplicity, delete and add new (since no update function)
+    deleteProduct(editingProduct.id);
     addProduct(payload);
+    setEditingProduct(null);
+    setShowEditModal(false);
     setNewProd({
       name: "",
       category: "Men",
@@ -147,9 +129,47 @@ export default function AdminPage() {
       sizes: "S,M,L,XL",
       tag: "New",
       image: "",
+      quantity: 10,
     });
     setImageFile(null);
-    alert("Product added");
+    alert("Product updated successfully");
+  };
+
+  const handleAddProduct = (e) => {
+    e.preventDefault();
+    if (!newProd.name || !newProd.price || !newProd.mrp) {
+      alert("Please fill in all required fields (Name, Price, MRP)");
+      return;
+    }
+    const payload = {
+      name: newProd.name,
+      category: newProd.category,
+      price: Number(newProd.price),
+      mrp: Number(newProd.mrp),
+      rating: Number(newProd.rating),
+      sizes: newProd.sizes
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      tag: newProd.tag || "New",
+      image: newProd.image || "",
+      quantity: Number(newProd.quantity) || 10,
+    };
+    addProduct(payload);
+    setShowEditModal(false);
+    setNewProd({
+      name: "",
+      category: "Men",
+      price: "",
+      mrp: "",
+      rating: 4.5,
+      sizes: "S,M,L,XL",
+      tag: "New",
+      image: "",
+      quantity: 10,
+    });
+    setImageFile(null);
+    alert("Product added successfully");
   };
 
   return (
@@ -200,159 +220,66 @@ export default function AdminPage() {
 
           {activeTab === "products" && (
             <div className="admin-section">
-              <h2>Product Catalog</h2>
+              <h2>Product Management</h2>
               <p className="muted">
-                Add / remove products. Changes are saved in browser
-                localStorage.
+                Manage your product catalog. Changes are saved in browser localStorage.
               </p>
-              <div className="admin-split">
-                <div className="admin-box">
-                  <h3>Existing Products</h3>
-                  <table className="admin-table">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>MRP</th>
-                        <th>Rating</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {products.map((p) => (
-                        <tr key={p.id}>
-                          <td>
-                            <div className="product-name-cell">
-                              <span>{p.name}</span>
-                              {p.tag === "New" && <span className="badge-new">New</span>}
-                            </div>
-                          </td>
-                          <td>{p.category}</td>
-                          <td>₹{p.price}</td>
-                          <td>₹{p.mrp}</td>
-                          <td>{p.rating}</td>
-                          <td>
-                            <div className="action-buttons">
-                              <button
-                                className="btn ghost"
-                                onClick={() => handleEditProduct(p)}
-                              >
-                                Edit
-                              </button>
-                              <button
-                                className="remove-btn"
-                                onClick={() => deleteProduct(p.id)}
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <div className="admin-box">
-                  <h3>{editingProduct ? "Edit Product" : "Add Product"}</h3>
-                  <form className="admin-form" onSubmit={editingProduct ? handleUpdateProduct : handleAddProduct}>
-                    <label>
-                      Name
-                      <input
-                        type="text"
-                        name="name"
-                        value={newProd.name}
-                        onChange={handleProdChange}
-                        required
-                      />
-                    </label>
-                    <label>
-                      Category
-                      <select
-                        name="category"
-                        value={newProd.category}
-                        onChange={handleProdChange}
-                      >
-                        <option value="Men">Men</option>
-                        <option value="Women">Women</option>
-                        <option value="Kids">Kids</option>
-                        <option value="Winter">Winter</option>
-                      </select>
-                    </label>
-                    <label>
-                      Price (₹)
-                      <input
-                        type="number"
-                        name="price"
-                        value={newProd.price}
-                        onChange={handleProdChange}
-                        required
-                      />
-                    </label>
-                    <label>
-                      MRP (₹)
-                      <input
-                        type="number"
-                        name="mrp"
-                        value={newProd.mrp}
-                        onChange={handleProdChange}
-                        required
-                      />
-                    </label>
-                    <label>
-                      Rating (0–5)
-                      <input
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        max="5"
-                        name="rating"
-                        value={newProd.rating}
-                        onChange={handleProdChange}
-                        required
-                      />
-                    </label>
-                    <label>
-                      Sizes (comma separated)
-                      <input
-                        type="text"
-                        name="sizes"
-                        value={newProd.sizes}
-                        onChange={handleProdChange}
-                        required
-                      />
-                    </label>
-                    <label>
-                      Tag
-                      <input
-                        type="text"
-                        name="tag"
-                        value={newProd.tag}
-                        onChange={handleProdChange}
-                      />
-                    </label>
-
-                    <label>
-                      Product Image
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                      />
-                    </label>
-                    <button type="submit" className="btn primary full">
-                      {editingProduct ? "Update Product" : "Add Product"}
+              <div className="product-management-layout">
+                <div className="products-table-container">
+                  <div className="table-header">
+                    <h3>Existing Products</h3>
+                    <button className="btn primary" onClick={() => setShowEditModal(true)}>
+                      Add New Product
                     </button>
-                    {editingProduct && (
-                      <button type="button" className="btn ghost full" onClick={cancelEdit}>
-                        Cancel Edit
-                      </button>
-                    )}
-                  </form>
-                  <p className="muted small-note">
-                    Note: This is a front-end only admin. Data is stored in
-                    your browser (localStorage) only.
-                  </p>
+                  </div>
+                  <div className="table-wrapper">
+                    <table className="products-table">
+                      <thead className="table-header-fixed">
+                        <tr>
+                          <th>Name</th>
+                          <th>Category</th>
+                          <th>Price</th>
+                          <th>MRP</th>
+                          <th>Rating</th>
+                          <th>Quantity</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {products.map((p, index) => (
+                          <tr key={p.id} className={index % 2 === 0 ? "even-row" : "odd-row"}>
+                            <td>
+                              <div className="product-name-cell">
+                                <span>{p.name}</span>
+                                {p.tag === "New" && <span className="badge-new">New</span>}
+                              </div>
+                            </td>
+                            <td>{p.category}</td>
+                            <td>₹{p.price}</td>
+                            <td>₹{p.mrp}</td>
+                            <td>{p.rating}</td>
+                            <td>{p.quantity}</td>
+                            <td>
+                              <div className="action-buttons">
+                                <button
+                                  className="btn ghost small"
+                                  onClick={() => handleEditProduct(p)}
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  className="btn danger small"
+                                  onClick={() => deleteProduct(p.id)}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -360,72 +287,77 @@ export default function AdminPage() {
 
           {activeTab === "orders" && (
             <div className="admin-section">
-              <h2>Orders</h2>
+              <h2>Order Management</h2>
               <p className="muted">
-                Update order status. This also reflects in customer "My
-                Orders" page.
+                Update order status. This also reflects in customer "My Orders" page.
               </p>
               {!orders.length ? (
                 <p className="muted empty-text">No orders yet.</p>
               ) : (
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>Customer</th>
-                      <th>Date</th>
-                      <th>Items</th>
-                      <th>Total</th>
-                      <th>Status</th>
-                      <th>Details</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orders.map((order, idx) => {
-                      const itemsCount = order.items.reduce(
-                        (sum, i) => sum + i.qty,
-                        0
-                      );
-                      return (
-                        <tr key={order.id} className={order.status === "Delivered" ? "delivered-row" : order.status === "Rejected" ? "rejected-row" : ""}>
-                          <td>{order.address?.fullName || 'N/A'}</td>
-                          <td>{order.date}</td>
-                          <td>{itemsCount} item(s)</td>
-                          <td>₹{order.total}</td>
-                          <td>
-                            <select
-                              value={order.status}
-                              onChange={(e) =>
-                                updateOrderStatus(idx, e.target.value)
-                              }
-                            >
-                              <option value="Confirmed">Confirmed</option>
-                              <option value="Shipped">Shipped</option>
-                              <option value="Delivered">Delivered</option>
-                              <option value="Rejected">Rejected</option>
-                            </select>
-                          </td>
-                          <td>
-                            <button
-                              className="btn ghost"
-                              onClick={() => handleViewOrderDetails(order)}
-                            >
-                              See Details
-                            </button>
-                          </td>
-                          <td>
-                            <button
-                              className="remove-btn"
-                              onClick={() => deleteOrder(idx)}
-                            >
-                              Delete
-                            </button>
-                          </td>
+                <div className="products-table-container">
+                  <div className="table-wrapper">
+                    <table className="products-table">
+                      <thead className="table-header-fixed">
+                        <tr>
+                          <th>Customer</th>
+                          <th>Date</th>
+                          <th>Items</th>
+                          <th>Total</th>
+                          <th>Status</th>
+                          <th>Details</th>
+                          <th>Actions</th>
                         </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                      </thead>
+                      <tbody>
+                        {orders.map((order, idx) => {
+                          const itemsCount = order.items.reduce(
+                            (sum, i) => sum + i.qty,
+                            0
+                          );
+                          return (
+                            <tr key={order.id} className={`${idx % 2 === 0 ? "even-row" : "odd-row"} ${order.status === "Delivered" ? "delivered-row" : order.status === "Rejected" ? "rejected-row" : ""}`}>
+                              <td>{order.address?.fullName || 'N/A'}</td>
+                              <td>{order.date}</td>
+                              <td>{itemsCount} item(s)</td>
+                              <td>₹{order.total}</td>
+                              <td>
+                                <select
+                                  value={order.status}
+                                  onChange={(e) =>
+                                    updateOrderStatus(idx, e.target.value)
+                                  }
+                                  className="status-select"
+                                >
+                                  <option value="placed">Placed</option>
+                                  <option value="packed">Packed</option>
+                                  <option value="shipped">Shipped</option>
+                                  <option value="out_for_delivery">Out for Delivery</option>
+                                  <option value="delivered">Delivered</option>
+                                </select>
+                              </td>
+                              <td>
+                                <button
+                                  className="btn ghost small"
+                                  onClick={() => handleViewOrderDetails(order)}
+                                >
+                                  See Details
+                                </button>
+                              </td>
+                              <td>
+                                <button
+                                  className="btn danger small"
+                                  onClick={() => deleteOrder(idx)}
+                                >
+                                  Delete
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               )}
             </div>
           )}
@@ -492,6 +424,126 @@ export default function AdminPage() {
               </ul>
             </div>
             <button className="btn primary" onClick={closeModal}>Close</button>
+          </div>
+        </div>
+      )}
+
+      {showEditModal && (
+        <div className="edit-modal-overlay" onClick={closeEditModal}>
+          <div className="edit-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{editingProduct ? "Edit Product" : "Add New Product"}</h3>
+              <button className="close-btn" onClick={closeEditModal}>×</button>
+            </div>
+            <form className="edit-form" onSubmit={editingProduct ? handleUpdateProduct : handleAddProduct}>
+              <div className="form-grid">
+                <label>
+                  Name
+                  <input
+                    type="text"
+                    name="name"
+                    value={newProd.name}
+                    onChange={handleProdChange}
+                    required
+                  />
+                </label>
+                <label>
+                  Category
+                  <select
+                    name="category"
+                    value={newProd.category}
+                    onChange={handleProdChange}
+                  >
+                    <option value="Men">Men</option>
+                    <option value="Women">Women</option>
+                    <option value="Kids">Kids</option>
+                    <option value="Winter">Winter</option>
+                  </select>
+                </label>
+                <label>
+                  Price (₹)
+                  <input
+                    type="number"
+                    name="price"
+                    value={newProd.price}
+                    onChange={handleProdChange}
+                    required
+                  />
+                </label>
+                <label>
+                  MRP (₹)
+                  <input
+                    type="number"
+                    name="mrp"
+                    value={newProd.mrp}
+                    onChange={handleProdChange}
+                    required
+                  />
+                </label>
+                <label>
+                  Rating (0–5)
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="5"
+                    name="rating"
+                    value={newProd.rating}
+                    onChange={handleProdChange}
+                    required
+                  />
+                </label>
+                <label>
+                  Quantity
+                  <input
+                    type="number"
+                    name="quantity"
+                    value={newProd.quantity}
+                    onChange={handleProdChange}
+                    min="0"
+                    required
+                  />
+                </label>
+              </div>
+              <label>
+                Sizes (comma separated)
+                <input
+                  type="text"
+                  name="sizes"
+                  value={newProd.sizes}
+                  onChange={handleProdChange}
+                  required
+                />
+              </label>
+              <label>
+                Tag
+                <input
+                  type="text"
+                  name="tag"
+                  value={newProd.tag}
+                  onChange={handleProdChange}
+                />
+              </label>
+              <label>
+                Product Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </label>
+              <div className="form-actions">
+                <button type="submit" className="btn primary">
+                  {editingProduct ? "Update Product" : "Add Product"}
+                </button>
+                <button type="button" className="btn ghost" onClick={closeEditModal}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+            <p className="muted small-note">
+              Note: This is a front-end only admin. Data is stored in your browser (localStorage) only.
+            </p>
           </div>
         </div>
       )}

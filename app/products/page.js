@@ -13,7 +13,8 @@ function ProductsContent() {
   const searchFromUrl = searchParams.get("search") || "";
 
   const [category, setCategory] = useState(categoryFromUrl);
-  const [sortBy, setSortBy] = useState("popularity");
+  const [sortType, setSortType] = useState("popularity");
+  const [sortDirection, setSortDirection] = useState("asc");
   const [search, setSearch] = useState(searchFromUrl);
 
   const categories = ["All", ...new Set(products.map(p => p.category))];
@@ -27,13 +28,17 @@ function ProductsContent() {
       const q = search.toLowerCase();
       list = list.filter((p) => p.name.toLowerCase().includes(q));
     }
-    if (sortBy === "priceLowHigh") {
-      list.sort((a, b) => a.price - b.price);
-    } else if (sortBy === "priceHighLow") {
-      list.sort((a, b) => b.price - a.price);
+    // Sorting logic
+    if (sortType === "price") {
+      list.sort((a, b) => sortDirection === "asc" ? a.price - b.price : b.price - a.price);
+    } else if (sortType === "name") {
+      list.sort((a, b) => sortDirection === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+    } else if (sortType === "popularity") {
+      // Assuming popularity is based on id or some field, for now sort by id
+      list.sort((a, b) => sortDirection === "asc" ? a.id - b.id : b.id - a.id);
     }
     return list;
-  }, [products, category, sortBy, search]);
+  }, [products, category, sortType, sortDirection, search]);
 
   return (
     <main className="page page-grid">
@@ -53,13 +58,22 @@ function ProductsContent() {
         <label>
           Sort by
           <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            value={sortType}
+            onChange={(e) => setSortType(e.target.value)}
           >
             <option value="popularity">Popularity</option>
-            <option value="priceLowHigh">Price: Low to High</option>
-            <option value="priceHighLow">Price: High to Low</option>
+            <option value="price">Price</option>
+            <option value="name">Name</option>
           </select>
+        </label>
+        <label>
+          Order
+          <button
+            className={`sort-toggle ${sortDirection === "asc" ? "asc" : "desc"}`}
+            onClick={() => setSortDirection(sortDirection === "asc" ? "desc" : "asc")}
+          >
+            {sortDirection === "asc" ? "↑" : "↓"}
+          </button>
         </label>
         <label>
           Search

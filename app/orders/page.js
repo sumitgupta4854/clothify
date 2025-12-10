@@ -36,17 +36,19 @@ export default function OrdersPage() {
               .map((i) => `${i.name} x${i.qty} (${i.size})`)
               .join(", ");
             return (
-              <article key={order.id} className="order-card">
-                <div className="order-card-header">
-                  <div>
-                    <strong>{order.id}</strong>
-                    <div className="muted">{order.date}</div>
+              <Link key={order.id} href={`/orders/${order.id}`} className="order-card-link">
+                <article className="order-card">
+                  <div className="order-card-header">
+                    <div>
+                      <strong>{order.id}</strong>
+                      <div className="muted">{order.date}</div>
+                    </div>
+                    <span className="order-status">{order.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
                   </div>
-                  <span className="order-status">{order.status}</span>
-                </div>
-                <div className="order-items">{itemsSummary}</div>
-                <div className="muted">Total: ₹{order.total}</div>
-              </article>
+                  <div className="order-items">{itemsSummary}</div>
+                  <div className="muted">Total: ₹{order.total}</div>
+                </article>
+              </Link>
             );
           })}
         </div>

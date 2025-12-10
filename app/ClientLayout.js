@@ -3,6 +3,7 @@
 import Topbar from "@/components/Topbar";
 import Footer from "@/components/Footer";
 import { StoreProvider, useStore } from "@/lib/store";
+import { ThemeProvider } from "@/lib/theme";
 
 function Toast() {
   const { toastMessage } = useStore();
@@ -16,11 +17,13 @@ function Toast() {
 
 export default function ClientLayout({ children }) {
   return (
-    <StoreProvider>
-      <Topbar />
-      {children}
-      <Footer />
-      <Toast />
-    </StoreProvider>
+    <ThemeProvider>
+      <StoreProvider>
+        <Topbar />
+        {children}
+        <Footer />
+        <Toast />
+      </StoreProvider>
+    </ThemeProvider>
   );
 }

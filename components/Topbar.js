@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useStore } from "@/lib/store";
+import { useTheme } from "@/lib/theme";
 
 const navItems = [
   { href: "/", label: "Home" },
@@ -16,6 +17,7 @@ export default function Topbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { cartCount } = useStore();
+  const { theme, toggleTheme } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (e) => {
@@ -27,9 +29,12 @@ export default function Topbar() {
   return (
     <header className="topbar">
       <div className="logo">
-        Clothify<span>.</span>
+        <Link href="/">
+          Clothify<span>.</span>
+        </Link>
       </div>
       <div className="search-wrapper">
+        <div className="search-icon">🔍</div>
         <input
           type="text"
           className="search-input"
@@ -44,7 +49,7 @@ export default function Topbar() {
           <Link
             key={item.href}
             href={item.href}
-            className={pathname === item.href ? "active" : ""}
+            className={pathname === item.href ? "nav-link active" : "nav-link"}
           >
             {item.label}
           </Link>
@@ -53,8 +58,17 @@ export default function Topbar() {
           href="/cart"
           className={pathname === "/cart" ? "cart-link active" : "cart-link"}
         >
-          Cart <span className="cart-count">{cartCount}</span>
+          <span className="cart-icon">🛒</span>
+          <span className="cart-text">Cart</span>
+          {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
         </Link>
+        <button
+          onClick={toggleTheme}
+          className="theme-toggle"
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+        >
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
         <Link
           href="/admin"
           className={pathname.startsWith("/admin") ? "admin-chip active" : "admin-chip"}
