@@ -21,9 +21,6 @@ export default function Footer() {
           <Link href="/orders">Track Orders</Link>
         </div>
       </div>
-      <div className="footer-bottom">
-        <p>&copy; 2024 Clothify. All rights reserved.</p>
-      </div>
     </footer>
   );
 }
