@@ -7,11 +7,18 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 export default function ProductCard({ product, onViewDetails, style }) {
+<<<<<<< HEAD
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useStore();
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+=======
+  const { addToCart } = useStore();
+  const router = useRouter();
+  const [quantity, setQuantity] = useState(1);
+  const [isAdded, setIsAdded] = useState(false);
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
 
   const discount =
     product.mrp && product.mrp > product.price
@@ -20,6 +27,7 @@ export default function ProductCard({ product, onViewDetails, style }) {
 
   const defaultSize = product.sizes?.[0] || "";
 
+<<<<<<< HEAD
   const handleAdd = async (e) => {
     e.preventDefault();
     const form = e.currentTarget.closest("form");
@@ -29,6 +37,13 @@ export default function ProductCard({ product, onViewDetails, style }) {
     await new Promise(resolve => setTimeout(resolve, 500));
     addToCart(product.id, size, quantity);
     setIsLoading(false);
+=======
+  const handleAdd = (e) => {
+    e.preventDefault();
+    const form = e.currentTarget.closest("form");
+    const size = form.size.value;
+    addToCart(product.id, size, quantity);
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 3000);
   };
@@ -62,6 +77,7 @@ export default function ProductCard({ product, onViewDetails, style }) {
   };
 
   return (
+<<<<<<< HEAD
     <article
       className="product-card"
       onClick={handleCardClick}
@@ -76,6 +92,9 @@ export default function ProductCard({ product, onViewDetails, style }) {
         }
       }}
     >
+=======
+    <article className="product-card" onClick={handleCardClick} style={{ cursor: 'pointer', ...style }}>
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
       <div className="product-image-container">
         <div className="product-image">
           {product.image && (
@@ -91,6 +110,7 @@ export default function ProductCard({ product, onViewDetails, style }) {
           )}
           <div className="image-overlay">
             <div className="quick-actions">
+<<<<<<< HEAD
               <button
                 className="quick-btn"
                 onClick={(e) => { e.stopPropagation(); handleViewDetails(e); }}
@@ -106,6 +126,12 @@ export default function ProductCard({ product, onViewDetails, style }) {
                 aria-label="Add to cart"
                 disabled={isLoading}
               >
+=======
+              <button className="quick-btn" onClick={(e) => { e.stopPropagation(); handleViewDetails(e); }}>
+                👁️
+              </button>
+              <button className="quick-btn" onClick={(e) => { e.stopPropagation(); handleAdd(e); }}>
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
                 🛒
               </button>
             </div>
@@ -119,6 +145,7 @@ export default function ProductCard({ product, onViewDetails, style }) {
           <span className="stock-badge out-of-stock image-badge">Out of stock</span>
         )}
         {discount > 0 && <span className="discount-badge">-{discount}%</span>}
+<<<<<<< HEAD
         <button
           className={`wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
           onClick={(e) => {
@@ -137,11 +164,18 @@ export default function ProductCard({ product, onViewDetails, style }) {
       <div className="product-info">
         <h3 className="product-name">{product.name || 'Product Name'}</h3>
         <div className="product-category">{product.category}</div>
+=======
+      </div>
+      <div className="product-info">
+        <div className="product-category">{product.category}</div>
+        <h3 className="product-name">{product.name}</h3>
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
         <div className="product-rating">
           <div className="stars">
             {"★".repeat(Math.floor(product.rating))}{"☆".repeat(5 - Math.floor(product.rating))}
           </div>
           <span className="rating-value">({product.rating})</span>
+<<<<<<< HEAD
         </div>
         <div className="price-and-stock">
           <div className="price-section">
@@ -162,6 +196,27 @@ export default function ProductCard({ product, onViewDetails, style }) {
             <span className="stock-badge out-of-stock">Out of stock</span>
           )}
         </div>
+=======
+          <span className="rating-count">• {Math.floor(Math.random() * 500) + 50} reviews</span>
+        </div>
+        <div className="price-section">
+          <div className="current-price">₹{product.price}</div>
+          {product.mrp && product.mrp > product.price && (
+            <>
+              <div className="original-price">₹{product.mrp}</div>
+              <div className="discount-percentage">
+                {Math.round(((product.mrp - product.price) / product.mrp) * 100)}% off
+              </div>
+            </>
+          )}
+        </div>
+      {product.quantity <= 3 && product.quantity > 0 && (
+        <span className="stock-badge low-stock">Only {product.quantity} items left</span>
+      )}
+      {product.quantity === 0 && (
+        <span className="stock-badge out-of-stock">Out of stock</span>
+      )}
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
     </div>
       <form className="card-footer">
         <select
@@ -169,7 +224,10 @@ export default function ProductCard({ product, onViewDetails, style }) {
           name="size"
           defaultValue={defaultSize}
           onClick={(e) => e.stopPropagation()}
+<<<<<<< HEAD
           aria-label="Select size"
+=======
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
         >
           {product.sizes?.map((s) => (
             <option key={s} value={s}>
@@ -179,6 +237,7 @@ export default function ProductCard({ product, onViewDetails, style }) {
         </select>
         <div className="action-buttons">
           <motion.button
+<<<<<<< HEAD
             className={`btn primary ${isAdded ? 'success-feedback' : ''} ${isLoading ? 'loading' : ''}`}
             type="button"
             onClick={(e) => { e.stopPropagation(); handleAdd(e); }}
@@ -217,6 +276,24 @@ export default function ProductCard({ product, onViewDetails, style }) {
           >
             {product.quantity === 0 ? "Out of Stock" : "Buy Now"}
           </motion.button>
+=======
+            className="btn primary"
+            type="button"
+            onClick={(e) => { e.stopPropagation(); handleAdd(e); }}
+            disabled={product.quantity === 0}
+            animate={isAdded ? {
+              scale: [1, 1.1, 1],
+              backgroundColor: "#22c55e",
+              transition: { duration: 0.5 }
+            } : {}}
+            whileTap={{ scale: 0.95 }}
+          >
+            {product.quantity === 0 ? "Out of Stock" : isAdded ? "Added ✓" : "Add to Cart"}
+          </motion.button>
+          <button className="btn secondary" type="button" onClick={(e) => { e.stopPropagation(); handleBuyNow(e); }} disabled={product.quantity === 0}>
+            {product.quantity === 0 ? "Out of Stock" : "Buy Now"}
+          </button>
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
         </div>
       </form>
     </article>

@@ -72,9 +72,13 @@ function ProductsContent() {
             className={`sort-toggle ${sortDirection === "asc" ? "asc" : "desc"}`}
             onClick={() => setSortDirection(sortDirection === "asc" ? "desc" : "asc")}
           >
+<<<<<<< HEAD
             {sortType === "price" && (sortDirection === "asc" ? "Low to High" : "High to Low")}
             {sortType === "name" && (sortDirection === "asc" ? "A-Z" : "Z-A")}
             {sortType === "popularity" && (sortDirection === "asc" ? "Oldest" : "Newest")}
+=======
+            {sortDirection === "asc" ? "↑" : "↓"}
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
           </button>
         </label>
         <label>

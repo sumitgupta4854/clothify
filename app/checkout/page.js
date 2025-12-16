@@ -1,13 +1,21 @@
 "use client";
 
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+=======
+import { useState } from "react";
+import Link from "next/link";
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
 import { useStore } from "@/lib/store";
 
 export default function CheckoutPage() {
   const { cart, placeOrder } = useStore();
+<<<<<<< HEAD
   const router = useRouter();
+=======
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
   const [form, setForm] = useState({
@@ -17,6 +25,7 @@ export default function CheckoutPage() {
     city: "",
     pincode: "",
     paymentMethod: "cod",
+<<<<<<< HEAD
     cardNumber: "",
     expiry: "",
     cvv: "",
@@ -112,10 +121,31 @@ export default function CheckoutPage() {
       setError("Failed to place order");
     }
     setLoading(false);
+=======
+  });
+  const [successOrderId, setSuccessOrderId] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!cart.length) {
+      alert("Cart is empty");
+      return;
+    }
+    const order = placeOrder(form);
+    if (order) {
+      setSuccessOrderId(order.id);
+    }
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
   };
 
   return (
     <main className="page checkout-page">
+<<<<<<< HEAD
       <div className="checkout-container">
         <div className="checkout-left">
           {successOrderId ? (
@@ -404,6 +434,98 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+=======
+      <section className="checkout-form-card">
+        <div className="section-header">
+          <h2>Checkout</h2>
+          <p>Enter your details to place the order.</p>
+        </div>
+        {successOrderId ? (
+          <div className="success-msg">
+            <h3>Order Placed!</h3>
+            <p>Your order {successOrderId} has been placed successfully.</p>
+            <Link href="/orders" className="btn ghost">
+              Go to Orders
+            </Link>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div className="form-grid">
+              <label>
+                Full Name
+                <input
+                  type="text"
+                  name="fullName"
+                  value={form.fullName}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
+                Mobile
+                <input
+                  type="tel"
+                  name="mobile"
+                  value={form.mobile}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
+                Address
+                <textarea
+                  name="address"
+                  value={form.address}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
+                City
+                <input
+                  type="text"
+                  name="city"
+                  value={form.city}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
+                Pincode
+                <input
+                  type="text"
+                  name="pincode"
+                  value={form.pincode}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
+                Payment Method
+                <select
+                  name="paymentMethod"
+                  value={form.paymentMethod}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="cod">Cash on Delivery</option>
+                  <option value="card">Card</option>
+                  <option value="upi">UPI</option>
+                </select>
+              </label>
+            </div>
+            <div className="checkout-summary">
+              <p>
+                Total Payable: ₹<span id="checkoutTotal">{total}</span>
+              </p>
+              <button type="submit" className="btn primary full">
+                Place Order
+              </button>
+            </div>
+          </form>
+        )}
+      </section>
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
     </main>
   );
 }

@@ -11,7 +11,10 @@
   "dependencies": {
     "framer-motion": "^12.23.26",
     "next": "14.2.4",
+<<<<<<< HEAD
     "razorpay": "^2.9.6",
+=======
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
     "react": "18.3.1",
     "react-dom": "18.3.1"
   }

@@ -1,6 +1,7 @@
 "use client";
 
 import ProductCard from "./ProductCard";
+<<<<<<< HEAD
 import { motion } from "framer-motion";
 
 export default function ProductGrid({ products, layout = "scroll" }) {
@@ -48,5 +49,20 @@ export default function ProductGrid({ products, layout = "scroll" }) {
         </motion.div>
       ))}
     </motion.div>
+=======
+
+export default function ProductGrid({ products, layout = "scroll" }) {
+  return (
+    <div className={layout === "grid" ? "product-grid" : "product-scroll"}>
+      {products.map((p, index) => (
+        <ProductCard
+          key={p.id}
+          product={p}
+          onViewDetails={() => {}} // Not used anymore
+          style={{ animationDelay: `${index * 0.1}s` }}
+        />
+      ))}
+    </div>
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
   );
 }

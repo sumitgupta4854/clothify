@@ -1,5 +1,6 @@
 "use client";
 
+<<<<<<< HEAD
 import { useStore } from "../../../lib/store";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -78,10 +79,87 @@ export default function OrderDetailsPage() {
           <div className={`order-status ${order.status}`}>
             {order.status.replace('_', ' ').toUpperCase()}
           </div>
+=======
+import { useParams } from "next/navigation";
+import { useStore } from "@/lib/store";
+import Link from "next/link";
+
+export default function OrderDetailsPage() {
+  const { id } = useParams();
+  const { orders } = useStore();
+  const order = orders.find((o) => o.id === id);
+
+  if (!order) {
+    return (
+      <main className="page">
+        <section className="section">
+          <div className="empty-state">
+            <p>Order not found.</p>
+            <Link href="/orders" className="btn primary">
+              Back to Orders
+            </Link>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  // Define tracking steps based on order status
+  const getTrackingSteps = () => {
+    const steps = [
+      { step: "Order Placed", date: order.date, completed: false },
+      { step: "Packed", date: null, completed: false },
+      { step: "Shipped", date: null, completed: false },
+      { step: "Out for Delivery", date: null, completed: false },
+      { step: "Delivered", date: null, completed: false },
+    ];
+
+    const statusMap = {
+      "placed": 0,
+      "packed": 1,
+      "shipped": 2,
+      "out_for_delivery": 3,
+      "delivered": 4,
+    };
+
+    const currentIndex = statusMap[order.status] || 0;
+
+    // Mark steps as completed up to but not including current status
+    for (let i = 0; i < currentIndex; i++) {
+      steps[i].completed = true;
+    }
+
+    // Current step gets timestamp if not delivered
+    if (order.status !== "delivered") {
+      steps[currentIndex].date = new Date().toLocaleString();
+    } else {
+      // All steps completed for delivered orders
+      steps.forEach(step => step.completed = true);
+      steps[4].date = new Date().toLocaleString();
+    }
+
+    return steps;
+  };
+
+  const tracking = getTrackingSteps();
+  const currentStepIndex = tracking.findIndex((step) => !step.completed);
+  const eta = order.status === "delivered" ? "Delivered" :
+               currentStepIndex >= 0 ? "In Progress" : "Delivered";
+
+  return (
+    <main className="page">
+      <section className="section">
+        <div className="section-header">
+          <h2>Order Details</h2>
+          <Link href="/orders" className="btn ghost">
+            Back to Orders
+          </Link>
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
         </div>
 
         <div className="order-details-container">
           <div className="order-summary-card">
+<<<<<<< HEAD
             <h3>Order Summary</h3>
             <div className="order-items-list">
               {order.items.map((item, index) => (
@@ -91,11 +169,39 @@ export default function OrderDetailsPage() {
                     <h4>{item.name}</h4>
                     <p>Size: {item.size} • Quantity: {item.qty}</p>
                     <p className="muted">{item.category}</p>
+=======
+            <div className="order-header">
+              <div>
+                <h3>{order.id}</h3>
+                <p className="muted">{order.date}</p>
+              </div>
+              <span className={`order-status ${order.status.toLowerCase()}`}>
+                {order.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+              </span>
+            </div>
+
+            <div className="order-items-list">
+              {order.items.map((item, index) => (
+                <div key={index} className="order-item">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="order-item-image"
+                  />
+                  <div className="order-item-details">
+                    <h4>{item.name}</h4>
+                    <p className="muted">Size: {item.size} | Qty: {item.qty}</p>
+                    <p className="muted">₹{item.price} each</p>
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
                   </div>
                   <div className="order-item-total">₹{item.price * item.qty}</div>
                 </div>
               ))}
             </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
             <div className="order-total">
               <strong>Total: ₹{order.total}</strong>
             </div>
@@ -104,6 +210,7 @@ export default function OrderDetailsPage() {
           <div className="tracking-card">
             <h3>Order Tracking</h3>
             <div className="tracking-timeline">
+<<<<<<< HEAD
               {statusSteps.map((step, index) => (
                 <div
                   key={step.key}
@@ -118,15 +225,38 @@ export default function OrderDetailsPage() {
                     {index === currentStepIndex && (
                       <p>Estimated delivery: 2-3 business days</p>
                     )}
+=======
+              {tracking.map((step, index) => (
+                <div
+                  key={index}
+                  className={`tracking-step ${step.completed ? "completed" : "pending"} ${
+                    index === currentStepIndex && !step.completed ? "current" : ""
+                  }`}
+                >
+                  <div className="tracking-icon">
+                    {step.completed ? "✓" : index === currentStepIndex ? "●" : "○"}
+                  </div>
+                  <div className="tracking-content">
+                    <h4>{step.step}</h4>
+                    {step.completed && step.date && <p className="muted">{step.date}</p>}
+                    {!step.completed && index === currentStepIndex && <p className="muted">In Progress</p>}
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
                   </div>
                 </div>
               ))}
             </div>
+<<<<<<< HEAD
+=======
+            <div className="eta-info">
+              <p><strong>Estimated Delivery:</strong> {eta}</p>
+            </div>
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
           </div>
 
           <div className="address-card">
             <h3>Delivery Address</h3>
             <div className="address-details">
+<<<<<<< HEAD
               {order.address ? (
                 <>
                   <p><strong>{order.address.name}</strong></p>
@@ -165,5 +295,16 @@ export default function OrderDetailsPage() {
         </div>
       </div>
     </div>
+=======
+              <p>{order.address.name}</p>
+              <p>{order.address.street}</p>
+              <p>{order.address.city}, {order.address.state} {order.address.zip}</p>
+              <p>{order.address.phone}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
   );
 }

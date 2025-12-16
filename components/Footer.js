@@ -1,4 +1,5 @@
 import Link from "next/link";
+<<<<<<< HEAD
 import { motion } from "framer-motion";
 
 export default function Footer() {
@@ -65,5 +66,30 @@ export default function Footer() {
         </motion.div>
       </div>
     </motion.footer>
+=======
+
+export default function Footer() {
+  return (
+    <footer className="footer">
+      <div className="footer-cols">
+        <div>
+          <h4>Clothify</h4>
+          <p>Your everyday fashion partner.</p>
+        </div>
+        <div>
+          <h4>Help</h4>
+          <Link href="/faq">FAQ</Link>
+          <Link href="/returns">Returns</Link>
+          <Link href="/shipping">Shipping</Link>
+        </div>
+        <div>
+          <h4>Account</h4>
+          <Link href="/login">Login</Link>
+          <Link href="/register">Register</Link>
+          <Link href="/orders">Track Orders</Link>
+        </div>
+      </div>
+    </footer>
+>>>>>>> 3c8d2e00d65f001eb55f8c8ddef0ab3d537da2b8
   );
 }
